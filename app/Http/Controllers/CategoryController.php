@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Categories;
+use App\Models\Category;
 use Illuminate\Support\Str;
 
-class CategoriesController extends Controller
+class CategoryController extends Controller
 {
     public function createCategory(Request $request)
     {
@@ -16,7 +16,7 @@ class CategoriesController extends Controller
 
         $slug = Str::slug($request->name);
 
-        $category = Categories::create([
+        $category = Category::create([
             'name' => $request->name,
             'slug' => $slug
         ]);
@@ -29,7 +29,7 @@ class CategoriesController extends Controller
 
     public function getCategory()
     {
-        $category = Categories::all();
+        $category = Category::all();
 
         return response()->json([
             'message' => 'Categories retrieved successfully',
@@ -39,13 +39,13 @@ class CategoriesController extends Controller
 
     public function updateCategory(Request $request, $id)
     {
-        $category = Categories::findOrFail($id);
+        $category = Category::findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|unique:categoies,name',
         ]);
 
-        $category = Categories::update([
+        $category = Category::update([
             'name' => $request->name,
             'slug' => Str::slug($request->name)
         ]);
@@ -58,7 +58,7 @@ class CategoriesController extends Controller
 
     public function deleteCategory($id)
     {
-        $category = Categories::findOrFail($id);
+        $category = Category::findOrFail($id);
         $category->delete;
 
         return response()->json(['message' => 'Category deleted successfully'], 200);
