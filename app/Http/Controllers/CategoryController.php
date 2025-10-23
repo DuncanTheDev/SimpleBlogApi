@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
-    public function createCategory(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|unique:categoies,name',
@@ -27,7 +27,7 @@ class CategoryController extends Controller
         ], 201);
     }
 
-    public function getCategory()
+    public function index()
     {
         $category = Category::all();
 
@@ -37,12 +37,14 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    public function updateCategory(Request $request, $id)
+    
+
+    public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
 
         $request->validate([
-            'name' => 'required|string|unique:categoies,name',
+            'name' => 'sometimes|string|unique:categoies,name',
         ]);
 
         $category = Category::update([
@@ -56,7 +58,7 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    public function deleteCategory($id)
+    public function destroy($id)
     {
         $category = Category::findOrFail($id);
         $category->delete;
