@@ -14,25 +14,26 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::get('/category', [CategoryController::class, 'index']);
+Route::get('/categories', [CategoryController::class, 'index']);
 
-Route::get('/post', [PostController::class, 'index']);
-Route::get('/post/${id}', [PostController::class, 'show']);
+Route::get('/posts', [PostController::class, 'index']);
+Route::get('/post/{id}', [PostController::class, 'show']);
 Route::get('/categories/{categoryID}/posts', [PostController::class, 'getByCategory']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::post('/category', [CategoryController::class, 'store']);
-    Route::put('/category/${id}', [CategoryController::class, 'update']);
-    Route::delete('/category/${id}', [CategoryController::class, 'destroy']);
+    Route::put('/category/{id}', [CategoryController::class, 'update']);
+    Route::delete('/category/{id}', [CategoryController::class, 'destroy']);
 
     Route::post('/post', [PostController::class, 'store']);
-    Route::put('/post/${id}', [PostController::class, 'update']);
-    Route::delete('/post/${id}', [PostController::class, 'destroy']);
+    Route::put('/post/{id}', [PostController::class, 'update']);
+    Route::delete('/post/{id}', [PostController::class, 'destroy']);
+    Route::post('/post/{id}/like', [PostController::class, 'toggleLikes']);
 
-    Route::get('/posts/${postID}/comments', [CommentController::class, 'index']);
-    Route::post('/posts/${postID}/comments', [CommentController::class, 'store']);
-    Route::get('/comments/${id}', [CommentController::class, 'update']);
-    Route::get('/comments/${id}', [CommentController::class, 'destroy']);
+    Route::get('/posts/{postID}/comments', [CommentController::class, 'index']);
+    Route::post('/posts/{postID}/comments', [CommentController::class, 'store']);
+    Route::put('/comments/{id}', [CommentController::class, 'update']);
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy']);
 });
