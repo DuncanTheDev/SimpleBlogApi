@@ -10,8 +10,8 @@ class PostController extends Controller
 {
     public function index()
     {
-        $post = Post::with(['user', 'category'])
-            ->withCount('comments')
+        $post = Post::with(['user:id,name', 'category:id,name'])
+            ->withCount('comments', 'likes')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -20,7 +20,7 @@ class PostController extends Controller
 
     public function show($id)
     {
-        $post = Post::with(['user', 'category', 'comments.user'])
+        $post = Post::with(['user:id,name', 'category:id,name', 'comments.user:id,name', 'likes'])
             ->findOrFail($id);
 
         return response()->json($post, 200);
@@ -33,7 +33,7 @@ class PostController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        if ($post->isEmpty) {
+        if ($post->isEmpty()) {
             return response()->json(['message' => 'No posts found for this category'], 404);
         }
 
@@ -93,5 +93,31 @@ class PostController extends Controller
         $post->delete();
 
         return response()->json(['message' => 'Post deleted successfully'], 200);
+    }
+
+    public function toggleLikes($postID)
+    {
+        $post = Post::findOrFail($postID);
+        $user = Auth::user();
+
+        $existingLike = $post->likes()->where('user_id', $user->id)->first();
+
+        if ($existingLike) {
+            $existingLike->delete();
+            $post->decrement('likes_count');
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Post unliked successfully'
+            ], 200);
+        }
+
+        $post->likes()->create(['user_id' => $user->id]);
+        $post->increment('likes_count');
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Post liked successfully'
+        ], 201);
     }
 }
